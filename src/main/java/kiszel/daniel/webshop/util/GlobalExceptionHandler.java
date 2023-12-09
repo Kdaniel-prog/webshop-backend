@@ -12,15 +12,15 @@ import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleAllUnmatchedExceptions(Exception ex) {
-        ResponseStatus responseStatus =
-                AnnotationUtils.findAnnotation(ex.getClass(), ResponseStatus.class);
+        ResponseStatus responseStatus = AnnotationUtils.findAnnotation(ex.getClass(), ResponseStatus.class);
+
         if (responseStatus == null || HttpStatus.INTERNAL_SERVER_ERROR.equals(responseStatus.code())) {
             // for instance, we may only want 500s to be an empty body
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
         Map<String, String> errors = new HashMap<>();
         errors.put("error",ex.getMessage());
         return new ResponseEntity<>(errors, responseStatus.code());

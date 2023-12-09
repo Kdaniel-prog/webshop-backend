@@ -21,4 +21,10 @@ public class CartController {
     public ResponseEntity<Cart> getProducts(@PathVariable("user_id") int userId){
         return new ResponseEntity<>(cartService.getCart(userId), HttpStatus.OK);
     }
+    @GetMapping("/ordered/{user_id}")
+    public ResponseEntity finishCart(@PathVariable("user_id") int userId){
+        cartService.finishCart(userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

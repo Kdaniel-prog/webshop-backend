@@ -15,14 +15,26 @@ public class CartService {
     @Autowired
     private CartRepository cartRepository;
     public Cart getCart(int userId){
-        Optional<Cart> cart = cartRepository.findCartByUserIdAndOrderedIsNull(userId);
+        Optional<Cart> cart = cartRepository.findCartByUserIdAndOrderedIsFalse(userId);
         if(cart.isEmpty()){
-            // Create a Timestamp object with the current date and time
             Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
             Date date = new Date(currentTimestamp.getTime());
-            return cartRepository.save(Cart.builder().userId(userId).createdAt(date).total(0L).build());
+            return cartRepository.save(
+                    Cart.builder()
+                    .userId(userId)
+                    .createdAt(date)
+                    .total(0L)
+                    .ordered(false)
+                    .build());
         }
         return cart.get();
     }
 
+    public void finishCart(int userId) {
+        Optional<Cart> cart = cartRepository.findCartByUserIdAndOrderedIsFalse(userId);
+        if(cart.isPresent()){
+            cart.get().setOrdered(true);
+            cartRepository.save(cart.get());
+        }
+    }
 }

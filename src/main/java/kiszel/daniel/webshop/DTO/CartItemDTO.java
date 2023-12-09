@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class RemoveCartItemDTO {
+public class CartItemDTO {
     @NotBlank(message = "Product Id is Blank")
     @NotNull(message = "Product ID is NULL")
     private int productId;
@@ -22,6 +22,7 @@ public class RemoveCartItemDTO {
     @NotNull(message = "Cart id is NULL")
     private int cartId;
 
-    private boolean deleteItem;
+    @NotBlank(message = "Cart id is Blank")
+    @NotNull(message = "Cart id is NULL")
+    private boolean isIncrease;
 }
-
