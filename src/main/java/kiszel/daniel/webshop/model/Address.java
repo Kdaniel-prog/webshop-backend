@@ -14,24 +14,31 @@ public class Address {
     @Id
     @Column(name = "ID")
     private int id;
+
     @Basic
     @Column(name = "ZIP_CODE", length = 4)
     private String zipCode;
+
     @Basic
     @Column(name = "CITY", length = 50)
     private String city;
+
     @Basic
     @Column(name = "STREET", length = 100)
     private String street;
+
     @Basic
     @Column(name = "HOUSE_NUMBER")
     private int houseNumber;
+
     @Basic
     @Column(name = "STAIRS", length = 50)
     private String stairs;
+
     @Basic
     @Column(name = "FLAT", length = 50)
     private String flat;
+
     @Basic
     @Column(name = "DOOR", length = 50)
     private String door;
@@ -48,4 +55,5 @@ public class Address {
     public int hashCode() {
         return Objects.hash(id, zipCode, city, street, houseNumber, stairs, flat, door);
     }
+
 }

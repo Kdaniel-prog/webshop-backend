@@ -18,19 +18,22 @@ public class User {
     @Basic
     @Column(name = "LAST_NAME", length = 100)
     private String lastName;
+
     @Basic
     @Column(name = "FIRST_NAME", length = 100)
     private String firstName;
+
     @Basic
     @Column(name = "USERNAME", length = 50)
     private String username;
-    @Basic
-    @Column(name = "BILLING_ADDRESS")
-    private Integer billingAddress;
-    @Basic
-    @Column(name = "DELIVERY_ADDRESS")
-    private Integer deliveryAddress;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "BILLING_ADDRESS", referencedColumnName = "id")
+    private Address billingAddress;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "DELIVERY_ADDRESS", referencedColumnName = "id")
+    private Address deliveryAddress;
 
     @Override
     public boolean equals(Object o) {

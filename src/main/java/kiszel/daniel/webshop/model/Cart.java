@@ -1,14 +1,16 @@
 package kiszel.daniel.webshop.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Date;
 import java.util.Objects;
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "CART", schema = "CIB")
 public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

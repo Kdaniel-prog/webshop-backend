@@ -1,35 +1,42 @@
 package kiszel.daniel.webshop.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Objects;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "CART_ITEM", schema = "CIB")
 public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "ID")
     private int id;
+
     @Basic
     @Column(name = "PRODUCT_NAME", length = 100)
     private String productName;
+
     @Basic
     @Column(name = "CATEGORY", length = 20)
     private String category;
+
     @Basic
     @Column(name = "QUANTITY")
     private int quantity;
+
     @Basic
     @Column(name = "PRICE")
     private Integer price;
-    @Basic
-    @Column(name = "CART_ID")
-    private Integer cartId;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "CART_ID", referencedColumnName = "id")
+    private Cart cartId;
 
     @Override
     public boolean equals(Object o) {
