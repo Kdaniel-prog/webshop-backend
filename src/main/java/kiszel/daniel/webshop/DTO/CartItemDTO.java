@@ -22,7 +22,12 @@ public class CartItemDTO {
     @NotNull(message = "Cart id is NULL")
     private int cartId;
 
-    @NotBlank(message = "Cart id is Blank")
-    @NotNull(message = "Cart id is NULL")
+    @NotBlank(message = "Increase is Blank")
+    @NotNull(message = "Increase is NULL")
     private boolean isIncrease;
+
+    private String productName;
+    private String category;
+    private int price;
+    private int fullPrice;
 }

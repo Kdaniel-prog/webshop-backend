@@ -10,12 +10,16 @@ import kiszel.daniel.webshop.repository.ProductRepository;
 import kiszel.daniel.webshop.util.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
 @Service
+@Transactional
 public class CartItemService {
 
     @Autowired
@@ -27,13 +31,41 @@ public class CartItemService {
     @Autowired
     private CartRepository cartRepository;
 
+    public Map<String, Integer> numberOfItems(int cartId){
+        Optional<Cart> cart = cartRepository.findById(cartId);
+        List<CartItem> cartItems = cartItemRepository.findAllByCartId(cart.get());
+        Integer counted = cartItems.stream()
+                .mapToInt(CartItem::getQuantity)
+                .sum();
+
+        Map<String, Integer> count = new HashMap<>();
+        count.put("count",counted);
+        return count;
+
+    }
+
     public List<CartItem> getItems(int cartId){
         Optional<Cart> cart = cartRepository.findById(cartId);
         return cartItemRepository.findAllByCartId(cart.get());
     }
 
+    /**
+     * @param cartItemDTO includ the quantity, product id, cart id,
+     *                    isIncrease mean if we want to add or remove item from the cart
+     * This function is add or remove product quantity to a cart_item
+     * If the product is doesnt had enough quantity than we return with an 400 error msg
+     * */
     public void addCartItemOrRemove(CartItemDTO cartItemDTO){
-        Optional<Product> product = productRepository.findById(cartItemDTO.getProductId());
+
+        Optional<Product> product;
+        if(cartItemDTO.isIncrease()){
+            product = productRepository.findById(cartItemDTO.getProductId());
+        }else{
+            product = productRepository.findByProductNameAndCategoryAndPrice(
+                    cartItemDTO.getProductName(),
+                    cartItemDTO.getCategory(),
+                    cartItemDTO.getPrice());
+        }
 
         if(product.isEmpty()){
             throw new BadRequestException("Product not founded");
@@ -82,21 +114,24 @@ public class CartItemService {
                 .build());
 
         if(cartItemDTO.isIncrease()){
-            handledCartItem.setQuantity(handledCartItem.getQuantity() + cartItemDTO.getQuantity());
-            cart.get().setTotal(cart.get().getTotal() + (long) handledCartItem.getPrice() * handledCartItem.getQuantity());
-        }else{
-            handledCartItem.setQuantity(handledCartItem.getQuantity() - cartItemDTO.getQuantity());
-            if(handledCartItem.getQuantity() <= 0){
-                cart.get().setTotal(cart.get().getTotal() - (long) handledCartItem.getPrice() * cartItemDTO.getQuantity());
+            if(cartItem.isPresent()){
+                handledCartItem.setQuantity(cartItem.get().getQuantity() + cartItemDTO.getQuantity());
             }else{
-                cart.get().setTotal(cart.get().getTotal() - (long) handledCartItem.getPrice() * handledCartItem.getQuantity());
+                handledCartItem.setQuantity(cartItemDTO.getQuantity());
 
             }
+            cart.get().setTotal(cart.get().getTotal() + cartItemDTO.getFullPrice());
+        }else{
+            handledCartItem.setQuantity(handledCartItem.getQuantity() - cartItemDTO.getQuantity());
+            long total = cart.get().getTotal() - cartItemDTO.getFullPrice();
+            cart.get().setTotal(total);
         }
 
         cartRepository.save(cart.get());
         if(handledCartItem.getQuantity() <= 0){
-            cartItemRepository.delete(handledCartItem);
+            handledCartItem.setCartId(null);
+            cartItemRepository.save(handledCartItem);
+            cartItemRepository.deleteById(cartItem.get().getId());
         }else{
             cartItemRepository.save(handledCartItem);
         }

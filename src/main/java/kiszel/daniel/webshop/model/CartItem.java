@@ -2,6 +2,8 @@ package kiszel.daniel.webshop.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Objects;
 
@@ -34,7 +36,7 @@ public class CartItem {
     @Column(name = "PRICE")
     private Integer price;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "CART_ID", referencedColumnName = "id")
     private Cart cartId;
 

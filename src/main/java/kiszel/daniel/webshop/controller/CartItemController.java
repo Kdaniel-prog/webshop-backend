@@ -11,10 +11,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/cart_item")
 @Validated
+@CrossOrigin(origins = "http://localhost:4200")
 public class CartItemController {
 
     @Autowired
@@ -27,5 +29,10 @@ public class CartItemController {
     @GetMapping("/{cartId}")
     public ResponseEntity<List<CartItem>> getItems(@PathVariable("cartId") int cartId){
         return new ResponseEntity<>(cartItemService.getItems(cartId),HttpStatus.OK);
+    }
+
+    @GetMapping("/size/{cartId}")
+    public ResponseEntity<Map<String, Integer>> numberOfItems(@PathVariable("cartId") int cartId){
+        return new ResponseEntity<>(cartItemService.numberOfItems(cartId),HttpStatus.OK);
     }
 }
